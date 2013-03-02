@@ -1,0 +1,24 @@
+metadata.json
+*~
+*#
+.#*
+\#*#
+.*.sw[a-z]
+*.un~
+
+# Vagrant
+.vagrant
+
+# Berkshelf
+Berksfile.lock
+/vendor
+/cookbooks
+
+# Bundler
+Gemfile.lock
+bin/*
+.bundle/*
+
+# Test Kitchen
+.kitchen/
+.kitchen.local.yml
