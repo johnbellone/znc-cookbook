@@ -45,12 +45,12 @@ LoadModule   = <%= "#{mod} #{params}".strip  %>
 
 	Allow = *
 
-  <% u['znc']['modules'].each do |mod,params| -%>
+  <% Array(u['znc']['modules']).each do |mod,params| -%>
 	LoadModule = <%= "#{mod} #{params}".strip  %>
   <% end -%>
 
 	Server = <%= u['znc']['server'] %>
-<% u['znc']['channels'].each do |chan,options| -%>
+<% Array(u['znc']['channels']).each do |chan,options| -%>
 
 	<Chan <%= chan %>>
 	</Chan>
