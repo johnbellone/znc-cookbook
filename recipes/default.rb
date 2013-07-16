@@ -54,23 +54,7 @@ template "/etc/init.d/znc" do
   mode "0755"
 end
 
-service "znc" do
-  supports :restart => true
-  action [:enable, :start]
-end
-
 users = search(:users, 'groups:znc')
-
-# znc doesn't like to be automated...this prevents a race condition
-# http://wiki.znc.in/Configuration#Editing_config
-execute "force-save-znc-config" do
-  command "pkill -SIGUSR1 znc"
-  action :run
-end
-execute "reload-znc-config" do
-  command "pkill -SIGHUP znc"
-  action :nothing
-end
 
 # render znc.conf
 template "#{node['znc']['data_dir']}/configs/znc.conf" do
@@ -81,6 +65,13 @@ template "#{node['znc']['data_dir']}/configs/znc.conf" do
   variables(
     :users => users
   )
-  notifies :run, "execute[reload-znc-config]", :immediately
+  notifies :reload, "service[znc]"
 end
 
+service "znc" do
+  supports :restart => true, :reload => true
+  # znc doesn't like to be automated...this prevents a race condition
+  # http://wiki.znc.in/Configuration#Editing_config
+  reload_command "pkill -SIGUSR1 znc && pkill -SIGHUP znc"
+  action [:enable, :start]
+end

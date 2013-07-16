@@ -32,5 +32,13 @@ platforms:
 suites:
 - name: default
   run_list:
+  - recipe[chef-solo-search]
   - recipe[znc]
   attributes: {}
+- name: source
+  run_list:
+  - recipe[chef-solo-search]
+  - recipe[znc]
+  attributes:
+    znc:
+      install_method: source
