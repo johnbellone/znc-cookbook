@@ -28,6 +28,12 @@ else
   set['znc']['group'] = 'znc'
 end
 
+if node.platform_family?("rhel")
+  set['znc']['init']['functions']= '/etc/rc.d/init.d/functions'
+else
+  set['znc']['init']['functions']= '/lib/lsb/init-functions'
+end
+
 default['znc']['conf_dir']        = "#{znc['data_dir']}/configs"
 default['znc']['log_dir']         = "#{znc['data_dir']}/moddata/adminlog"
 default['znc']['module_dir']      = "#{znc['data_dir']}/modules"

@@ -25,7 +25,7 @@ else
     [ "debian","ubuntu" ] => {
       "default" => %w{ znc znc-dev znc-extra }# znc-webadmin}
     },
-    "default" => %w{ znc znc-dev znc-extra }
+    "default" => %w{ znc znc-devel }
   )
 
   znc_pkgs.each do |pkg|
