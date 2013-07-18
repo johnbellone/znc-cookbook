@@ -1,3 +1,4 @@
+name		 "znc"
 maintainer       "Seth Chisamore"
 maintainer_email "schisamo@gmail.com"
 license          "Apache 2.0"
