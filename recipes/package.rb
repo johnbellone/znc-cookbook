@@ -3,6 +3,7 @@
 # Recipe:: package
 #
 # Copyright (c) 2011-2013, Seth Chisamore
+# Copyright (C) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -18,20 +19,10 @@
 #
 
 case node['platform']
-when "macosx"
-  # TODO: install via homebrew
+when 'macosx'
+  homebrew_package 'znc'
 else
-  znc_pkgs = value_for_platform(
-    [ "debian","ubuntu" ] => {
-      "default" => %w{ znc znc-dev znc-extra }# znc-webadmin}
-    },
-    "default" => %w{ znc znc-dev znc-extra }
-  )
-
-  znc_pkgs.each do |pkg|
-    package pkg do
-      action :install
-    end
-  end
-
+  package 'znc'
+  package 'znc-dev'
+  package 'znc-extra'
 end
