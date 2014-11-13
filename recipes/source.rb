@@ -3,6 +3,7 @@
 # Recipe:: source
 #
 # Copyright (c) 2011-2013, Seth Chisamore
+# Copyright (C) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -17,37 +18,11 @@
 # limitations under the License.
 #
 
-configure_options = node['znc']['configure_options'].join(" ")
-
-include_recipe 'build-essential'
-
-pkgs = value_for_platform(
-    [ "debian", "ubuntu" ] =>
-        {"default" => %w{ libssl-dev libperl-dev pkg-config libc-ares-dev }},
-    "default" => %w{ libssl-dev libperl-dev pkg-config libc-ares-dev }
-  )
-
-pkgs.each do |pkg|
-  package pkg do
-    action :install
-  end
-end
-
-version = node['znc']['version']
-
-remote_file "#{Chef::Config[:file_cache_path]}/znc-#{version}.tar.gz" do
-  source "#{node['znc']['url']}/znc-#{version}.tar.gz"
-  checksum node['znc']['checksum']
-  mode "0644"
-  not_if "which znc"
-end
-
-bash "build znc" do
-  cwd Chef::Config[:file_cache_path]
-  code <<-EOF
-  tar -zxvf znc-#{version}.tar.gz
-  (cd znc-#{version} && ./configure #{configure_options})
-  (cd znc-#{version} && make && make install)
-  EOF
-  not_if "which znc"
+ark 'znc' do
+  path node['znc']['source']['install_path']
+  checksum node['znc']['source']['checksum']
+  url node['znc']['source']['source_url'] % { version: node['znc']['source']['version'] }
+  owner node['znc']['user']
+  group node['znc']['group']
+  action [:configure, :install_with_make]
 end
