@@ -3,6 +3,7 @@
 # Recipe:: default
 #
 # Copyright (c) 2011-2013, Seth Chisamore
+# Copyright (c) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -19,18 +20,15 @@
 
 include_recipe "znc::#{node['znc']['install_method']}"
 
-user node['znc']['user']
 group node['znc']['group']
+user node['znc']['user'] do
+  gid node['znc']['group']
+end
 
-[ node['znc']['data_dir'],
-  node['znc']['conf_dir'],
-  node['znc']['module_dir'],
-  node['znc']['users_dir']
-].each do |dir|
-  directory dir do
-    owner node['znc']['user']
-    group node['znc']['group']
-  end
+directory node['znc']['data_dir'] do
+  recursive true
+  user node['znc']['user']
+  group node['znc']['group']
 end
 
 bash "generate-pem" do
@@ -47,40 +45,26 @@ bash "generate-pem" do
   creates "#{node['znc']['data_dir']}/znc.pem"
 end
 
-template "/etc/init.d/znc" do
-  source "znc.init.erb"
-  owner "root"
-  group "root"
-  mode "0755"
+template '/etc/init.d/znc' do
+  source 'znc.init.erb'
+  owner 'root'
+  group 'root'
+  mode '0755'
 end
 
-service "znc" do
-  supports :restart => true
-  action [:enable, :start]
-end
-
-users = search(:users, 'groups:znc')
-
-# znc doesn't like to be automated...this prevents a race condition
-# http://wiki.znc.in/Configuration#Editing_config
-execute "force-save-znc-config" do
-  command "pkill -SIGUSR1 znc"
-  action :run
-end
-execute "reload-znc-config" do
-  command "pkill -SIGHUP znc"
-  action :nothing
-end
-
-# render znc.conf
 template "#{node['znc']['data_dir']}/configs/znc.conf" do
-  source "znc.conf.erb"
-  mode 0600
+  source 'znc.conf.erb'
+  mode '0600'
   owner node['znc']['user']
   group node['znc']['group']
   variables(
     :users => users
   )
-  notifies :run, "execute[reload-znc-config]", :immediately
+
+  notifies :start, 'service[znc]', :delayed
 end
 
+service 'znc' do
+  supports restart: true
+  action :nothing
+end

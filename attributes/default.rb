@@ -16,24 +16,23 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
 default['znc']['install_method'] = 'package'
 
-case node["platform"]
-when "macosx"
-  set['znc']['data_dir'] = '$HOME/.znc'
-else
-  set['znc']['data_dir'] = '/etc/znc'
-  set['znc']['user'] = 'znc'
-  set['znc']['group'] = 'znc'
-end
-
-default['znc']['conf_dir']        = "#{znc['data_dir']}/configs"
-default['znc']['log_dir']         = "#{znc['data_dir']}/moddata/adminlog"
-default['znc']['module_dir']      = "#{znc['data_dir']}/modules"
-default['znc']['users_dir']       = "#{znc['data_dir']}/users"
-
-default['znc']['port']            = "+7777"
-default['znc']['skin']            = "dark-clouds"
+default['znc']['user'] = 'znc'
+default['znc']['group'] = 'znc'
+default['znc']['skin'] = 'dark-clouds'
+default['znc']['port'] = '7777'
 default['znc']['max_buffer_size'] = 500
-default['znc']['modules']         = %w{ webadmin adminlog }
+default['znc']['modules'] = %w(webadmin adminlog)
+default['znc']['data_dir'] = '/var/lib/znc'
+
+default['znc']['source']['path'] = nil
+default['znc']['source']['url'] = "http://znc.in/releases/znc-%{version}.tar.gz"
+default['znc']['source']['checksum'] = '86e98fd0ed182d39828c926809f8075d836ee3b70a6dd43dfbb434822f2a7b52'
+default['znc']['source']['version'] = '1.4'
+default['znc']['source']['configure_options'] = %w(--enable-extra)
+default['znc']['source']['make_options'] = []
+
+if node['platform'] == 'macosx'
+  default['znc']['data_dir'] = '$HOME/.znc'
+end
