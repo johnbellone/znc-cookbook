@@ -1,12 +1,12 @@
 source 'https://rubygems.org'
 
-gem 'foodcritic'
 gem 'berkshelf'
-gem 'thor-foodcritic'
-gem 'vagrant', '~> 1.0.6'
+gem 'coveralls', require: false
+gem 'foodcritic'
+gem 'rake'
 
-group :integration do
-  gem 'test-kitchen', :git => "http://github.com/opscode/test-kitchen.git", :branch => '1.0'
-  gem 'kitchen-vagrant', :git => "http://github.com/opscode/kitchen-vagrant.git"
-  gem 'kitchen-ec2', :git => "http://github.com/opscode/kitchen-ec2.git"
+group :test, :development do
+  gem 'test-kitchen'
+  gem 'kitchen-vagrant'
+  gem 'chefspec'
 end
