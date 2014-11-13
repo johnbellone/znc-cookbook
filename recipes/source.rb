@@ -19,9 +19,12 @@
 #
 
 ark 'znc' do
-  path node['znc']['source']['install_path']
+  version node['znc']['source']['version']
+  path node['znc']['source']['path']
   checksum node['znc']['source']['checksum']
-  url node['znc']['source']['source_url'] % { version: node['znc']['source']['version'] }
+  autoconf_opts node['znc']['source']['configure_options']
+  make_opts node['znc']['source']['make_options']
+  url node['znc']['source']['url'] % { version: node['znc']['source']['version'] }
   owner node['znc']['user']
   group node['znc']['group']
   action [:configure, :install_with_make]
