@@ -19,7 +19,7 @@
 # limitations under the License.
 #
 
-include_recipe "znc::#{node['znc']['install_method']}"
+include_recipe "znc::install_#{node['znc']['install_method']}"
 
 group node['znc']['group']
 user node['znc']['user'] do
