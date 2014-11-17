@@ -1,12 +1,15 @@
 source 'https://rubygems.org'
-
 gem 'berkshelf'
-gem 'coveralls', require: false
-gem 'foodcritic'
 gem 'rake'
+gem 'rspec'
+gem 'rubocop'
+gem 'foodcritic'
+gem 'tailor'
+gem 'coveralls', require: false
 
-group :test, :development do
+group :test, :integration do
+  gem 'chefspec'
   gem 'test-kitchen'
   gem 'kitchen-vagrant'
-  gem 'chefspec'
+  gem 'serverspec'
 end
