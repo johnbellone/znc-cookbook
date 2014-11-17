@@ -3,6 +3,8 @@
 # Attributes:: default
 #
 # Copyright (c) 2011-2013, Seth Chisamore
+# Copyright (c) 2014, John Bellone
+# Copyright (c) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
