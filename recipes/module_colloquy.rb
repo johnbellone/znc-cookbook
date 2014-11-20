@@ -3,7 +3,7 @@
 # Recipe:: module_colloquy
 #
 # Copyright (c) 2011-2013, Seth Chisamore
-# Copyright (c) 2014, John Bellone <jbellone@bloomberg.net>
+# Copyright (c) 2014, John Bellone
 # Copyright (c) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
