@@ -35,6 +35,14 @@ default['znc']['source']['version'] = '1.4'
 default['znc']['source']['configure_options'] = %w(--enable-extra)
 default['znc']['source']['make_options'] = []
 
+default['znc']['ssl_certificate']['common_name'] = ''
+default['znc']['ssl_certificate']['country'] = 'US'
+default['znc']['ssl_certificate']['city'] = 'Washington D.C.'
+default['znc']['ssl_certificate']['organization'] = 'Bloomberg'
+default['znc']['ssl_certificate']['department'] = 'Web Operations'
+default['znc']['ssl_certificate']['email'] = 'webops@bloomberg.net'
+default['znc']['ssl_certificate']['years'] = 1
+
 if node['platform'] == 'macosx'
   default['znc']['data_dir'] = '$HOME/.znc'
 end

@@ -32,20 +32,6 @@ directory node['znc']['data_dir'] do
   group node['znc']['group']
 end
 
-bash "generate-pem" do
-  cwd node['znc']['data_dir']
-  code <<-EOH
-  umask 077
-  openssl genrsa 2048 > znc.key
-  openssl req -subj /C=US/ST=Several/L=Locality/O=Example/OU=Operations/CN=#{node['fqdn']}/emailAddress=znc@#{node['fqdn']} \
-   -new -x509 -nodes -sha1 -days 3650 -key znc.key > znc.crt
-  cat znc.key znc.crt > znc.pem
-  EOH
-  user node['znc']['user']
-  group node['znc']['grouip']
-  creates "#{node['znc']['data_dir']}/znc.pem"
-end
-
 template '/etc/init.d/znc' do
   source 'znc.init.erb'
   owner 'root'
@@ -53,16 +39,19 @@ template '/etc/init.d/znc' do
   mode '0755'
 end
 
+ssl_certificate 'znc' do
+  namespace node['znc']['ssl_certificate']
+  cert_dir node['znc']['data_dir']
+  notifies :restart, 'service[znc]', :delayed
+end
+
 template "#{node['znc']['data_dir']}/configs/znc.conf" do
   source 'znc.conf.erb'
   mode '0600'
   owner node['znc']['user']
   group node['znc']['group']
-  variables(
-    :users => users
-  )
-
-  notifies :start, 'service[znc]', :delayed
+  variables(users: users)
+  notifies :restart, 'service[znc]', :delayed
 end
 
 service 'znc' do

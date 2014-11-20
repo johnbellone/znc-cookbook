@@ -7,6 +7,7 @@ version          '0.1.0'
 
 depends 'ark'
 depends 'chef-sugar'
+depends 'ssl_certificate'
 
 supports 'centos', '>= 6.0'
 supports 'redhat', '>= 6.0'
