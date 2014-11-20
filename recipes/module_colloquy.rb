@@ -3,6 +3,8 @@
 # Recipe:: module_colloquy
 #
 # Copyright (c) 2011-2013, Seth Chisamore
+# Copyright (c) 2014, John Bellone <jbellone@bloomberg.net>
+# Copyright (c) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,21 +18,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-# znc > 0.0.9 required...this means compiling from source on most platforms
+module_dir = ::File.join(node['znc']['data_dir'], 'modules')
+directory module_dir do
+  recursive true
+  owner node['znc']['user']
+  group node['znc']['group']
+  not_if { ::Dir.exist?(module_dir) }
+end
 
 remote_file "#{Chef::Config[:file_cache_path]}/colloquy.cpp" do
   source "https://github.com/wired/colloquypush/raw/master/znc/colloquy.cpp"
   mode "0644"
-  not_if {::File.exists?("#{node['znc']['module_dir']}/colloquy.so")}
+  not_if { ::File.exists?("#{node['znc']['module_dir']}/colloquy.so")}
 end
 
-bash "build colloquy znc module" do
+bash "znc-buildmod colloquy.cpp && mv colloquy.so #{module_dir}/" do
   cwd Chef::Config[:file_cache_path]
-  code <<-EOF
-  znc-buildmod colloquy.cpp
-  mv colloquy.so #{node['znc']['module_dir']}/
-  EOF
-  creates "#{node['znc']['module_dir']}/colloquy.so"
-  notifies :run, "execute[reload-znc-config]", :immediately
+  creates ::File.join(module_dir, 'colloquy.so')
+  notifies :restart, 'service[znc]', :delayed
 end
