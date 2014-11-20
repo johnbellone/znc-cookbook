@@ -18,10 +18,15 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe 'chef-sugar::default'
 
 case node['platform']
 when 'macosx'
-  homebrew_package 'znc'
+  if chef_version.satisfies?('~> 12.0') # Ignore < Chef 12.
+    homebrew_package 'znc'
+  else
+    bash 'brew install znc'
+  end
 else
   package 'znc'
   package 'znc-dev'
