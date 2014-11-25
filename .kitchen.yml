@@ -15,4 +15,3 @@ suites:
   - name: default
     run_list:
       - recipe[znc::default]
-    attributes:
