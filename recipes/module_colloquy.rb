@@ -18,22 +18,20 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-module_dir = ::File.join(node['znc']['data_dir'], 'modules')
-directory module_dir do
-  recursive true
-  owner node['znc']['user']
-  group node['znc']['group']
-  not_if { ::Dir.exist?(module_dir) }
+service 'znc' do
+  supports restart: true
+  action :nothing
 end
 
+module_dir = File.join(node['znc']['data_dir'], 'modules')
 remote_file "#{Chef::Config[:file_cache_path]}/colloquy.cpp" do
   source "https://github.com/wired/colloquypush/raw/master/znc/colloquy.cpp"
   mode "0644"
-  not_if { ::File.exists?("#{node['znc']['module_dir']}/colloquy.so")}
+  not_if { File.exists?("#{module_dir}/colloquy.so")}
 end
 
 bash "znc-buildmod colloquy.cpp && mv colloquy.so #{module_dir}/" do
   cwd Chef::Config[:file_cache_path]
-  creates ::File.join(module_dir, 'colloquy.so')
+  creates File.join(module_dir, 'colloquy.so')
   notifies :restart, 'service[znc]', :delayed
 end

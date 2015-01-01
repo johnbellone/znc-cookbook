@@ -1,20 +1,24 @@
 require 'spec_helper'
 
-described_recipe 'znc::default' do
-  it { expect(chef_run).to include_recipe 'znc::install_package' }
+describe_recipe 'znc::default' do
+  it do
+    method = chef_run.node['znc']['install_method']
+    expect(chef_run).to include_recipe("znc::_#{method}")
+  end
   it { expect(chef_run).to create_group('znc') }
   it do
     expect(chef_run).to create_user('znc')
       .with(gid: 'znc')
   end
   it do
-    expect(chef_run).to create_directory('/var/lib/znc')
+    expect(chef_run).to create_directory('/var/lib/znc/configs')
+      .with(recursive: true)
       .with(owner: 'znc')
       .with(group: 'znc')
-      .with(recursive: true)
   end
   it do
-    expect(chef_run).to create_directory('/var/lib/znc/configs')
+    expect(chef_run).to create_directory('/var/lib/znc/modules')
+      .with(recursive: true)
       .with(owner: 'znc')
       .with(group: 'znc')
   end
@@ -24,6 +28,7 @@ described_recipe 'znc::default' do
       .with(group: 'root')
       .with(mode: '0755')
   end
+  it { expect(chef_run.service('znc')).to do_nothing }
   it do
     expect(chef_run).to create_template('/var/lib/znc/configs/znc.conf')
       .with(owner: 'znc')

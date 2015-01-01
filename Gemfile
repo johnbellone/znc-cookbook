@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 gem 'berkshelf'
+gem 'chef-sugar'
+gem 'chef-vault'
 gem 'rake'
 gem 'rspec'
 gem 'rubocop'

@@ -27,6 +27,7 @@ default['znc']['port'] = '7777'
 default['znc']['max_buffer_size'] = 500
 default['znc']['modules'] = %w(webadmin adminlog)
 default['znc']['data_dir'] = '/var/lib/znc'
+default['znc']['data_bag'] = 'znc_users'
 
 default['znc']['source']['path'] = nil
 default['znc']['source']['url'] = "http://znc.in/releases/znc-%{version}.tar.gz"

@@ -1,15 +1,8 @@
 require 'spec_helper'
 
-described_recipe 'znc::module_colloquy' do
+describe_recipe 'znc::module_colloquy' do
   let(:module_dir) { '/var/lib/znc/modules' }
-
-  it do
-    expect(chef_run).to create_directory(module_dir)
-      .with(recursive: true)
-      .with(owner: 'znc')
-      .with(group: 'znc')
-  end
-
+  it { expect(chef_run.service('znc')).to do_nothing }
   it do
     expect(chef_run).to create_remote_file(File.join(Chef::Config[:file_cache_path], 'colloquy.cpp'))
       .with(source: 'https://github.com/wired/colloquypush/raw/master/znc/colloquy.cpp')

@@ -18,18 +18,27 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-include_recipe "znc::install_#{node['znc']['install_method']}"
+include_recipe "znc::_#{node['znc']['install_method']}"
 
 group node['znc']['group']
 user node['znc']['user'] do
   gid node['znc']['group']
 end
 
-directory node['znc']['data_dir'] do
+config_dir = File.join(node['znc']['data_dir'], 'configs')
+directory config_dir do
   recursive true
   user node['znc']['user']
   group node['znc']['group']
+  not_if { Dir.exist?(config_dir) }
+end
+
+module_dir = File.join(node['znc']['data_dir'], 'modules')
+directory module_dir do
+  recursive true
+  user node['znc']['user']
+  group node['znc']['group']
+  not_if { Dir.exist?(module_dir) }
 end
 
 template '/etc/init.d/znc' do
@@ -39,18 +48,12 @@ template '/etc/init.d/znc' do
   mode '0755'
 end
 
-ssl_certificate 'znc' do
-  namespace node['znc']['ssl_certificate']
-  cert_dir node['znc']['data_dir']
-  notifies :restart, 'service[znc]', :delayed
-end
-
 template "#{node['znc']['data_dir']}/configs/znc.conf" do
   source 'znc.conf.erb'
   mode '0600'
   owner node['znc']['user']
   group node['znc']['group']
-  variables(users: users)
+  variables(users: data_bag(node['znc']['data_bag']))
   notifies :restart, 'service[znc]', :delayed
 end
 

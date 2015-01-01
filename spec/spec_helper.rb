@@ -1,6 +1,5 @@
 require 'chefspec'
 require 'chefspec/berkshelf'
-require 'chefspec/server'
 require 'coveralls'
 
 Coveralls.wear!
@@ -33,12 +32,17 @@ end
 at_exit { ChefSpec::Coverage.report! }
 
 RSpec.shared_context 'recipe tests', type: :recipe do
-  let(:chef_run) { ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '12.04').converge(described_recipe) }
-
-  def node_attributes
-    {
-     platform: 'ubuntu',
-     version: '12.04'
-    }
+  let(:chef_run) do
+    ChefSpec::ServerRunner.new(platform: 'ubuntu', version: '12.04') do |node, server|
+      server.create_data_bag('znc_users', {
+        jbellone: {
+          id: 'jbellone',
+          znc: {
+            alt_nick: 'johnbellone',
+            real_name: 'John Bellone'
+          }
+        }
+      })
+    end.converge(described_recipe)
   end
 end
