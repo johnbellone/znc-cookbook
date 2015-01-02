@@ -13,6 +13,7 @@ metadata.json
 Berksfile.lock
 /vendor
 /cookbooks
+/coverage
 
 # Bundler
 Gemfile.lock

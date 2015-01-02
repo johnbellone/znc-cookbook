@@ -3,6 +3,8 @@
 # Recipe:: default
 #
 # Copyright (c) 2011-2013, Seth Chisamore
+# Copyright (c) 2014, John Bellone
+# Copyright (c) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,71 +18,46 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+include_recipe "znc::_#{node['znc']['install_method']}"
 
-include_recipe "znc::#{node['znc']['install_method']}"
-
-user node['znc']['user']
 group node['znc']['group']
-
-[ node['znc']['data_dir'],
-  node['znc']['conf_dir'],
-  node['znc']['module_dir'],
-  node['znc']['users_dir']
-].each do |dir|
-  directory dir do
-    owner node['znc']['user']
-    group node['znc']['group']
-  end
+user node['znc']['user'] do
+  gid node['znc']['group']
 end
 
-bash "generate-pem" do
-  cwd node['znc']['data_dir']
-  code <<-EOH
-  umask 077
-  openssl genrsa 2048 > znc.key
-  openssl req -subj /C=US/ST=Several/L=Locality/O=Example/OU=Operations/CN=#{node['fqdn']}/emailAddress=znc@#{node['fqdn']} \
-   -new -x509 -nodes -sha1 -days 3650 -key znc.key > znc.crt
-  cat znc.key znc.crt > znc.pem
-  EOH
+config_dir = File.join(node['znc']['data_dir'], 'configs')
+directory config_dir do
+  recursive true
   user node['znc']['user']
-  group node['znc']['grouip']
-  creates "#{node['znc']['data_dir']}/znc.pem"
+  group node['znc']['group']
+  not_if { Dir.exist?(config_dir) }
 end
 
-template "/etc/init.d/znc" do
-  source "znc.init.erb"
-  owner "root"
-  group "root"
-  mode "0755"
+module_dir = File.join(node['znc']['data_dir'], 'modules')
+directory module_dir do
+  recursive true
+  user node['znc']['user']
+  group node['znc']['group']
+  not_if { Dir.exist?(module_dir) }
 end
 
-service "znc" do
-  supports :restart => true
-  action [:enable, :start]
+template '/etc/init.d/znc' do
+  source 'znc.init.erb'
+  owner 'root'
+  group 'root'
+  mode '0755'
 end
 
-users = search(:users, 'groups:znc')
-
-# znc doesn't like to be automated...this prevents a race condition
-# http://wiki.znc.in/Configuration#Editing_config
-execute "force-save-znc-config" do
-  command "pkill -SIGUSR1 znc"
-  action :run
-end
-execute "reload-znc-config" do
-  command "pkill -SIGHUP znc"
-  action :nothing
-end
-
-# render znc.conf
 template "#{node['znc']['data_dir']}/configs/znc.conf" do
-  source "znc.conf.erb"
-  mode 0600
+  source 'znc.conf.erb'
+  mode '0600'
   owner node['znc']['user']
   group node['znc']['group']
-  variables(
-    :users => users
-  )
-  notifies :run, "execute[reload-znc-config]", :immediately
+  variables(users: data_bag(node['znc']['data_bag']))
+  notifies :restart, 'service[znc]', :delayed
 end
 
+service 'znc' do
+  supports restart: true
+  action :nothing
+end

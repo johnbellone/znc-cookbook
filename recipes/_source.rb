@@ -1,8 +1,10 @@
 #
 # Cookbook Name:: znc
-# Attribute:: source
+# Recipe:: source
 #
 # Copyright (c) 2011-2013, Seth Chisamore
+# Copyright (c) 2014, John Bellone
+# Copyright (c) 2014, Bloomberg Finance L.P.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -16,8 +18,14 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
-default['znc']['url'] = "http://znc.in/releases/archive"
-default['znc']['version'] = "0.098"
-default['znc']['checksum'] = "3b88d33c21e464aa82c84b2dc3bcd52dec95c87a052bb80aff6336dbb4043eb4"
-default['znc']['configure_options'] = %W{ --enable-extra }
+ark 'znc' do
+  version node['znc']['source']['version']
+  path node['znc']['source']['path']
+  checksum node['znc']['source']['checksum']
+  autoconf_opts node['znc']['source']['configure_options']
+  make_opts node['znc']['source']['make_options']
+  url node['znc']['source']['url'] % { version: node['znc']['source']['version'] }
+  owner node['znc']['user']
+  group node['znc']['group']
+  action [:configure, :install_with_make]
+end
