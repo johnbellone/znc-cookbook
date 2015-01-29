@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 
-default['znc']['url'] = "http://znc.in/releases/archive"
-default['znc']['version'] = "0.098"
-default['znc']['checksum'] = "3b88d33c21e464aa82c84b2dc3bcd52dec95c87a052bb80aff6336dbb4043eb4"
+default['znc']['url'] = "http://znc.in/releases"
+default['znc']['version'] = "1.0"
+default['znc']['checksum'] = "a85539da42697b26e4d46205def36bb799f83d6aeef401d53c49ee674142062a"
 default['znc']['configure_options'] = %W{ --enable-extra }

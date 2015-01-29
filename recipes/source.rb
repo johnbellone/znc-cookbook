@@ -24,7 +24,7 @@ include_recipe 'build-essential'
 pkgs = value_for_platform(
     [ "debian", "ubuntu" ] =>
         {"default" => %w{ libssl-dev libperl-dev pkg-config libc-ares-dev }},
-    "default" => %w{ libssl-dev libperl-dev pkg-config libc-ares-dev }
+    "default" => %w{ openssl-devel perl-devel pkgconfig c-ares-devel }
   )
 
 pkgs.each do |pkg|

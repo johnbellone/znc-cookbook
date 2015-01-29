@@ -1,0 +1,18 @@
+{
+  "id": "testuser2",
+  "comment": "Test User two",
+  "shell": "/bin/bash",
+  "groups": ["sysadmin", "znc"],
+  "znc": {
+    "pass": "notsecure!",
+    "ident": "testuser2",
+    "quit_msg": "goin home",
+    "chan_modes": "+stn",
+    "buffer": 200,
+    "keep_buffer": true,
+    "timezone_offset": "-5",
+    "server": "irc.example.com 6667",
+    "modules": {},
+    "channels": {}
+  }
+}
